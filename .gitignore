@@ -1,0 +1,5 @@
+commit.[sh|bat]
+build/
+compile/
+dist/
+.database.sds
