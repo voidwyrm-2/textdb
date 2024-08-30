@@ -1,0 +1,31 @@
+#rawentry an example of SDS syntax
+
+#folder Reminders
+    #rawentry Feed cats
+    
+    #rawentry Draw a bird
+
+    #rawentry Make some pasta
+
+    #rawentry Pet chickens
+#end
+
+#folder Cool Ideas
+    #rawentry A Science-based Dragon MMO
+
+    #namedentry Chicken Sweater
+        They must get so cold in the winter months, you know?
+        We should just knit them sweaters!
+    #end
+#end
+
+#folder Recipes
+    #namedentry A Good Sandwich
+        bread(any time),
+        lettuce,
+        tomato,
+        pickle,
+        pepper,
+        honey mustard
+    #end
+#end

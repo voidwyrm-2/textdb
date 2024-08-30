@@ -1,78 +1,57 @@
 package main
 
-func ForEach[arrType, accType, retType any](arr []arrType, cb func(v arrType, acc accType) retType) {
+import (
+	"bufio"
+	"os"
+	"strings"
+)
 
+func ForEach[arrType, retType any](arr []arrType, fn func(v arrType, acc retType) retType) retType {
+	var accum retType
+	for _, item := range arr {
+		accum = fn(item, accum)
+	}
+	return accum
 }
 
-type Entry interface {
-	Name() string
-	Content() string
-	Format() string
-	IsFolder() (bool, []Entry)
+func StartswithAny(s string, check []string) bool {
+	for _, c := range check {
+		if strings.HasPrefix(s, c) {
+			return true
+		}
+	}
+	return false
 }
 
-type RawEntry struct {
-	content string
+func readFile(fileName string) (string, error) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	content := ""
+	for scanner.Scan() {
+		content += scanner.Text() + "\n"
+	}
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+	return content, nil
 }
 
-func NewRawEntry(content string) RawEntry {
-	return RawEntry{content: content}
-}
+func writeFile(filename string, data string) error {
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
 
-func (re RawEntry) Name() string {
-	return ""
-}
+	_, err = file.WriteString(data)
+	if err != nil {
+		return err
+	}
 
-func (re RawEntry) Content() string {
-	return re.content
-}
-
-func (re RawEntry) Format() string {
-	return "`" + re.content + "`"
-}
-
-func (re RawEntry) IsFolder() (bool, []Entry) {
-	return false, []Entry{}
-}
-
-type NamedEntry struct {
-	name string
-	RawEntry
-}
-
-func NewNamedEntry(name, content string) NamedEntry {
-	return NamedEntry{name: name, RawEntry: RawEntry{content: content}}
-}
-
-func (ne NamedEntry) Name() string {
-	return ne.name
-}
-
-func (ne NamedEntry) Format() string {
-	return ne.name
-}
-
-type FolderEntry struct {
-	name    string
-	entries []Entry
-}
-
-func NewFolderEntry(name string, entries []Entry) FolderEntry {
-	return FolderEntry{name: name, entries: entries}
-}
-
-func (fe FolderEntry) Name() string {
-	return fe.name
-}
-
-func (fe FolderEntry) Content() string {
-	return ""
-}
-
-func (fe FolderEntry) Format() string {
-	return "(folder)" + fe.name
-}
-
-func (fe FolderEntry) IsFolder() (bool, []Entry) {
-	return true, fe.entries
+	return nil
 }
